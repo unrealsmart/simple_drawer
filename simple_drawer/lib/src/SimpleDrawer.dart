@@ -115,8 +115,9 @@ class SimpleDrawer extends StatefulWidget {
       this.fadeColor,
       required this.id,
       this.onDrawerStatusChanged}) {
-
-    SimpleDrawer._idToOnStatusChanged[this.id] = this.onDrawerStatusChanged!;
+    if (this.onDrawerStatusChanged != null) {
+      SimpleDrawer._idToOnStatusChanged[this.id] = this.onDrawerStatusChanged!;
+    }
   }
 
   @override
