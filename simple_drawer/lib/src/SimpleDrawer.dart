@@ -16,7 +16,7 @@ class SimpleDrawer extends StatefulWidget {
   static Map<String, Function> _idToOnStatusChanged = HashMap();
 
   /// returns the current status of a drawer
-  static DrawerStatus getDrawerStatus(String id) {
+  static DrawerStatus? getDrawerStatus(String id) {
     if (_idToStatus[id] == null) {
       return DrawerStatus.inactive;
     }
@@ -27,7 +27,7 @@ class SimpleDrawer extends StatefulWidget {
     SimpleDrawer._idToStatus[id] = drawerStatus;
     if (_idToOnStatusChanged[id] != null) {
       try {
-        _idToOnStatusChanged[id](drawerStatus);
+        _idToOnStatusChanged[id]!(drawerStatus);
       } catch (e) {
         print(
             "Error while running onDrawerStatusChanged. This function receives exactly one argument, which is a DrawerStatus");
@@ -38,19 +38,19 @@ class SimpleDrawer extends StatefulWidget {
   /// activates the SimpleDrawer of the chosen Id & set isActive to true
   static activate(String id) {
     if (_idToStreamController[id] == null ||
-        _idToStreamController[id].isClosed) {
+        _idToStreamController[id]!.isClosed) {
       return;
     }
-    _idToStreamController[id].add("activate");
+    _idToStreamController[id]?.add("activate");
   }
 
   /// deactivates the SimpleDrawer of the chosen Id & set isActive to false
   static deactivate(String id) {
     if (_idToStreamController[id] == null ||
-        _idToStreamController[id].isClosed) {
+        _idToStreamController[id]!.isClosed) {
       return;
     }
-    _idToStreamController[id].add("deactivate");
+    _idToStreamController[id]?.add("deactivate");
   }
 
   /// unique id chosen for a SimpleDrawer (chosen by user)
@@ -77,62 +77,46 @@ class SimpleDrawer extends StatefulWidget {
   /// the duration in milliseconds which it takes for the simpleDrawer to be
   ///     pushed in & pushed out
   /// (optional argument. default: 300)
-  final int animationDurationInMilliseconds;
+  final int? animationDurationInMilliseconds;
 
   /// the animation curve which the simpleDrawer takes to push in and out
   /// (optional argument. default: Curves.ease)
-  final Curve animationCurve;
+  final Curve? animationCurve;
 
   /// the maximum height which the entire widget (including the fading
   /// background) can take up
   /// (optional argument. default: entire device height)
-  final double simpleDrawerAreaHeight;
+  final double? simpleDrawerAreaHeight;
 
   /// the maximum width which the entire widget (including the fading
   /// background) can take up
   /// (optional argument. default: entire device width)
-  final double simpleDrawerAreaWidth;
+  final double? simpleDrawerAreaWidth;
 
   /// The color which is overlaid behind the simpleDrawer
   /// to obscure the content in the background.
   /// (optional argument. default: Colors.black54)
-  final Color fadeColor;
+  final Color? fadeColor;
 
   /// This function is called whenever the DrawerStatus of this SimpleDrawer
   /// changes.
   /// Receives the new DrawerStatus as an argument.
-  final Function onDrawerStatusChanged;
+  final Function? onDrawerStatusChanged;
 
   SimpleDrawer(
-      {this.direction,
-      this.childWidth,
-      this.childHeight,
+      {required this.direction,
+        required this.childWidth,
+        required this.childHeight,
       this.animationDurationInMilliseconds,
       this.animationCurve,
-      this.child,
+        required this.child,
       this.simpleDrawerAreaHeight,
       this.simpleDrawerAreaWidth,
       this.fadeColor,
-      this.id,
+      required this.id,
       this.onDrawerStatusChanged}) {
-    if (id == null) {
-      throw Exception("id can not be null");
-    }
-    if (direction == null) {
-      throw Exception("direction can not be null");
-    }
-    if ((direction == Direction.bottom || direction == Direction.top) &&
-        this.childHeight == null) {
-      throw Exception(
-          "childHeight must not be null for Direction.top and Direction.bottom");
-    }
-    if ((direction == Direction.left || direction == Direction.right) &&
-        this.childWidth == null) {
-      throw Exception(
-          "childWidth must not be null for Direction.left and Direction.right");
-    }
 
-    SimpleDrawer._idToOnStatusChanged[this.id] = this.onDrawerStatusChanged;
+    SimpleDrawer._idToOnStatusChanged[this.id] = this.onDrawerStatusChanged!;
   }
 
   @override
@@ -149,7 +133,7 @@ class _SimpleDrawerState extends State<SimpleDrawer> {
     SimpleDrawer._idToStreamController[widget.id] = StreamController<String>();
 
     // listen to the StreamController for events "activate" & "deactivate"
-    SimpleDrawer._idToStreamController[widget.id].stream.listen((event) {
+    SimpleDrawer._idToStreamController[widget.id]?.stream.listen((event) {
       if (event == "activate") {
         activateSimpleDrawer();
       }
@@ -163,7 +147,7 @@ class _SimpleDrawerState extends State<SimpleDrawer> {
   @override
   void dispose() {
     // close SteamController
-    SimpleDrawer._idToStreamController[widget.id].close();
+    SimpleDrawer._idToStreamController[widget.id]?.close();
 
     super.dispose();
   }
@@ -237,7 +221,7 @@ class _SimpleDrawerState extends State<SimpleDrawer> {
   /// chosen Direction
   Widget simpleDrawer(int durationInMilli, Curve animationCurve,
       double maxWidth, double maxHeight) {
-    Widget simpleDrawer;
+    Widget simpleDrawer = Container();
 
     switch (widget.direction) {
       case Direction.bottom:
@@ -318,8 +302,8 @@ class _SimpleDrawerState extends State<SimpleDrawer> {
   ///     SimpleDrawerWidget
   Widget contractor(int durationInMilli, Curve animationCurve, double maxWidth,
       double maxHeight) {
-    double touchToRetractWidth;
-    double touchToRetractHeight;
+    double touchToRetractWidth = 0;
+    double touchToRetractHeight = 0;
 
     // set touchToRetractWidget for Direction.top & .bottom
     if (widget.direction == Direction.top ||

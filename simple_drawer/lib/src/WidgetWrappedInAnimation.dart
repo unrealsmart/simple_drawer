@@ -3,19 +3,15 @@ import 'package:flutter/material.dart';
 /// Wraps a Widget with a fade in or fade out animation.
 class WidgetWrappedInAnimation extends StatefulWidget {
   final Widget child;
-  final TransitionType transitionType;
-  final int durationInMilliseconds;
-  final Curve curve;
+  final TransitionType? transitionType;
+  final int? durationInMilliseconds;
+  final Curve? curve;
 
   WidgetWrappedInAnimation(
-      {this.child,
+      {required this.child,
       this.transitionType,
       this.durationInMilliseconds,
-      this.curve}) {
-    if (child == null) {
-      throw Exception("ScaleUpAnimation needs child to be set");
-    }
-  }
+      this.curve});
 
   @override
   _WidgetWrappedInAnimationState createState() =>
@@ -24,7 +20,7 @@ class WidgetWrappedInAnimation extends StatefulWidget {
 
 class _WidgetWrappedInAnimationState extends State<WidgetWrappedInAnimation>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
+  late AnimationController _animationController;
 
   @override
   void initState() {
